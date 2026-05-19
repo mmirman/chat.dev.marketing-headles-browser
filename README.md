@@ -1,15 +1,14 @@
 <div id="toc" align="center" style="margin-bottom: 0;">
   <ul style="list-style: none; margin: 0; padding: 0;">
-    <a href="https://stagehand.dev">
+    <a href="https://github.com/mmirman/chat.dev.marketing-headles-browser">
       <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="media/dark_logo.png" />
-        <img alt="Stagehand" src="media/light_logo.png" width="200" style="margin-right: 30px;" />
+        <img alt="MarketingHand - the browser that can" src="media/marketinghand_logo.svg" width="420" style="margin-right: 30px;" />
       </picture>
     </a>
   </ul>
 </div>
 <p align="center">
-  <strong>The AI Browser Automation Framework</strong><br>
+  <strong>MarketingHand - the browser that can</strong><br>
   <a href="https://docs.stagehand.dev">Read the Docs</a>
 </p>
 
@@ -45,7 +44,7 @@ If you're looking for the Python implementation, you can find it
 
 <div align="center" style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 0;">
   <b>Vibe code</b>
-  <span style="font-size: 1.05em;"> Stagehand with </span>
+  <span style="font-size: 1.05em;"> MarketingHand with </span>
   <a href="https://director.ai" style="display: flex; align-items: center;">
     <span>Director</span>
   </a>
@@ -55,23 +54,23 @@ If you're looking for the Python implementation, you can find it
   </picture>
 </div>
 
-## What is Stagehand?
+## What is MarketingHand?
 
-Stagehand is a browser automation framework used to control web browsers with natural language and code. By combining the power of AI with the precision of code, Stagehand makes web automation flexible, maintainable, and actually reliable.
+MarketingHand is a browser automation framework used to control web browsers with natural language and code. By combining the power of AI with the precision of code, MarketingHand makes web automation flexible, maintainable, and actually reliable.
 
-## Why Stagehand?
+## Why MarketingHand?
 
-Most existing browser automation tools either require you to write low-level code in a framework like Selenium, Playwright, or Puppeteer, or use high-level agents that can be unpredictable in production. By letting developers choose what to write in code vs. natural language (and bridging the gap between the two) Stagehand is the natural choice for browser automations in production.
+Most existing browser automation tools either require you to write low-level code in a framework like Selenium, Playwright, or Puppeteer, or use high-level agents that can be unpredictable in production. By letting developers choose what to write in code vs. natural language (and bridging the gap between the two) MarketingHand is the natural choice for browser automations in production.
 
 1. **Choose when to write code vs. natural language**: use AI when you want to navigate unfamiliar pages, and use code when you know exactly what you want to do.
 
-2. **Go from AI-driven to repeatable workflows**: Stagehand lets you preview AI actions before running them, and also helps you easily cache repeatable actions to save time and tokens.
+2. **Go from AI-driven to repeatable workflows**: MarketingHand lets you preview AI actions before running them, and also helps you easily cache repeatable actions to save time and tokens.
 
-3. **Write once, run forever**: Stagehand's auto-caching combined with self-healing remembers previous actions, runs without LLM inference, and knows when to involve AI whenever the website changes and your automation breaks.
+3. **Write once, run forever**: MarketingHand's auto-caching combined with self-healing remembers previous actions, runs without LLM inference, and knows when to involve AI whenever the website changes and your automation breaks.
 
 ## Getting Started
 
-Start with Stagehand with one line of code, or check out our [Quickstart Guide](https://docs.stagehand.dev/v3/first-steps/quickstart) for more information:
+Start with MarketingHand with one line of code, or check out the Stagehand [Quickstart Guide](https://docs.stagehand.dev/v3/first-steps/quickstart) for more information:
 
 ```bash
 npx create-browser-app
@@ -79,10 +78,10 @@ npx create-browser-app
 
 ## Example
 
-Here's how to build a sample browser automation with Stagehand:
+Here's how to build a sample browser automation with MarketingHand:
 
 ```typescript
-// Stagehand's CDP engine provides an optimized, low level interface to the browser built for automation
+// MarketingHand's CDP engine provides an optimized, low level interface to the browser built for automation
 const page = stagehand.context.pages()[0];
 await page.goto("https://github.com/browserbase");
 
@@ -146,7 +145,7 @@ pnpm run build
 pnpm run example # run the blank script at ./examples/example.ts
 ```
 
-Stagehand is best when you have an API key for an LLM provider and Browserbase credentials. To add these to your project, run:
+MarketingHand is best when you have an API key for an LLM provider and Browserbase credentials. To add these to your project, run:
 
 ```bash
 cp .env.example .env
@@ -191,3 +190,5 @@ We'd like to thank the following people for their major contributions to Stageha
 Licensed under the MIT License.
 
 Copyright 2025 Browserbase, Inc.
+
+MarketingHand is a fork of Browserbase Stagehand.
