@@ -30,6 +30,10 @@ import {
 import { discoverLocalCdp } from "./local-cdp-discovery";
 import { resolveWsTarget } from "./resolve-ws";
 import { NodeHtmlMarkdown } from "node-html-markdown";
+import {
+  getLinkedInTestInitScript,
+  modifyNavigationUrl,
+} from "./marketinghand-transforms";
 
 const program = new Command();
 
@@ -496,6 +500,7 @@ async function runDaemon(session: string, headless: boolean): Promise<void> {
         env: useBrowserbase ? "BROWSERBASE" : "LOCAL",
         verbose: 0,
         disablePino: true,
+        initScripts: [{ content: getLinkedInTestInitScript() }],
         ...(useBrowserbase
           ? {
               disableAPI: true,
@@ -1655,43 +1660,20 @@ function isHeadless(opts: GlobalOpts): boolean {
   return opts.headless === true && opts.headed !== true;
 }
 
-function appendTestToDomain(value: string): string {
-  let url: URL;
-  try {
-    url = new URL(value);
-  } catch {
-    return value;
-  }
-
-  const hostname = url.hostname;
-  if (!hostname || net.isIP(hostname) !== 0) {
-    return value;
-  }
-
-  const labels = hostname.split(".");
-  const labelIndex = labels.length > 1 ? labels.length - 2 : 0;
-  if (labels[labelIndex].endsWith("test")) return value;
-  labels[labelIndex] = `${labels[labelIndex]}test`;
-  url.hostname = labels.join(".");
-  return url.toString();
-}
-
 function applyDomainModification(
   command: string,
   args: unknown[],
   enabled: boolean | undefined,
 ): unknown[] {
-  if (!enabled) return args;
-
   if (command === "open" && typeof args[0] === "string") {
-    return [appendTestToDomain(args[0]), ...args.slice(1)];
+    return [modifyNavigationUrl(args[0], enabled), ...args.slice(1)];
   }
 
   if (
     command === "newpage" &&
     (typeof args[0] === "string" || args[0] === undefined)
   ) {
-    return [args[0] ? appendTestToDomain(args[0]) : args[0]];
+    return [args[0] ? modifyNavigationUrl(args[0], enabled) : args[0]];
   }
 
   return args;
@@ -1754,6 +1736,7 @@ async function runCommand(command: string, args: unknown[]): Promise<unknown> {
       env: "LOCAL",
       verbose: 0,
       disablePino: true,
+      initScripts: [{ content: getLinkedInTestInitScript() }],
       localBrowserLaunchOptions: {
         cdpUrl,
       },

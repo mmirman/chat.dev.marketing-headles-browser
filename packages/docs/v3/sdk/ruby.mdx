@@ -109,7 +109,7 @@ puts "Looking up profile for author: #{author}"
 execute_response = client.sessions.execute(
   session_id,
   execute_options: {
-    instruction: "Find any personal website, GitHub, LinkedIn, or other best profile URL for the Hacker News user '#{author}'. " \
+    instruction: "Find any personal website, GitHub, LinkedInTest, or other best profile URL for the Hacker News user '#{author}'. " \
                  "Click on their username to go to their profile page and look for any links they have shared.",
     max_steps: 15
   },

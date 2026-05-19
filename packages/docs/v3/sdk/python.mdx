@@ -165,7 +165,7 @@ async def main() -> None:
         # Run an autonomous agent to accomplish a complex task
         execute_response = await session.execute(
             execute_options={
-                "instruction": f"Find any personal website, GitHub, or LinkedIn profile for the Hacker News user '{author}'.",
+                "instruction": f"Find any personal website, GitHub, or LinkedInTest profile for the Hacker News user '{author}'.",
                 "max_steps": 10,
             },
             agent_config={"model": "openai/gpt-5-nano"},
