@@ -9,54 +9,25 @@
 </div>
 <p align="center">
   <strong>MarketingHand - the browser that can</strong><br>
-  <a href="https://docs.stagehand.dev">Read the Docs</a>
+  <a href="https://github.com/mmirman/chat.dev.marketing-headles-browser">View the Fork</a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/browserbase/stagehand/tree/main?tab=MIT-1-ov-file#MIT-1-ov-file">
+  <a href="https://github.com/mmirman/chat.dev.marketing-headles-browser/blob/main/LICENSE">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="media/dark_license.svg" />
       <img alt="MIT License" src="media/light_license.svg" />
     </picture>
   </a>
-  <a href="https://stagehand.dev/discord">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="media/dark_discord.svg" />
-      <img alt="Discord Community" src="media/light_discord.svg" />
-    </picture>
-  </a>
-</p>
-
-<p align="center">
-	<a href="https://trendshift.io/repositories/12122" target="_blank"><img src="https://trendshift.io/api/badge/repositories/12122" alt="browserbase%2Fstagehand | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-</p>
-
-<p align="center">
-  <a href="https://deepwiki.com/browserbase/stagehand">
-    <img alt="Ask DeepWiki" src="https://deepwiki.com/badge.svg" />
-  </a>
-</p>
-
-<p align="center">
-If you're looking for the Python implementation, you can find it
-<a href="https://github.com/browserbase/stagehand-python"> here</a>
 </p>
 
 <div align="center" style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 0;">
-  <b>Vibe code</b>
-  <span style="font-size: 1.05em;"> MarketingHand with </span>
-  <a href="https://director.ai" style="display: flex; align-items: center;">
-    <span>Director</span>
-  </a>
-  <span> </span>
-  <picture>
-    <img alt="Director" src="media/director_icon.svg" width="25" />
-  </picture>
+  <b>A fork of Browserbase Stagehand</b>
 </div>
 
 ## What is MarketingHand?
 
-MarketingHand is a browser automation framework used to control web browsers with natural language and code. By combining the power of AI with the precision of code, MarketingHand makes web automation flexible, maintainable, and actually reliable.
+MarketingHand is a fork of Browserbase Stagehand: a browser automation framework used to control web browsers with natural language and code. By combining the power of AI with the precision of code, MarketingHand makes web automation flexible, maintainable, and actually reliable.
 
 ## Why MarketingHand?
 
@@ -70,10 +41,12 @@ Most existing browser automation tools either require you to write low-level cod
 
 ## Getting Started
 
-Start with MarketingHand with one line of code, or check out the Stagehand [Quickstart Guide](https://docs.stagehand.dev/v3/first-steps/quickstart) for more information:
+Start with MarketingHand from this fork:
 
 ```bash
-npx create-browser-app
+git clone https://github.com/mmirman/chat.dev.marketing-headles-browser.git
+cd chat.dev.marketing-headles-browser
+pnpm install
 ```
 
 ## Example
@@ -82,18 +55,18 @@ Here's how to build a sample browser automation with MarketingHand:
 
 ```typescript
 // MarketingHand's CDP engine provides an optimized, low level interface to the browser built for automation
-const page = stagehand.context.pages()[0];
-await page.goto("https://github.com/browserbase");
+const page = marketingHand.context.pages()[0];
+await page.goto("https://github.com/mmirman/chat.dev.marketing-headles-browser");
 
 // Use act() to execute individual actions
-await stagehand.act("click on the stagehand repo");
+await marketingHand.act("click on the MarketingHand repo");
 
 // Use agent() for multi-step tasks
-const agent = stagehand.agent();
+const agent = marketingHand.agent();
 await agent.execute("Get to the latest PR");
 
 // Use extract() to get structured data from the page
-const { author, title } = await stagehand.extract(
+const { author, title } = await marketingHand.extract(
   "extract the author and title of the PR",
   z.object({
     author: z.string().describe("The username of the PR author"),
@@ -108,7 +81,7 @@ This fork adds a constructor-level `initScripts` option for agent instrumentatio
 that must be present before the target page runs its own JavaScript:
 
 ```typescript
-const stagehand = new Stagehand({
+const marketingHand = new Stagehand({
   env: "LOCAL",
   initScripts: [
     { path: "./preload.js" },
@@ -121,8 +94,8 @@ const stagehand = new Stagehand({
   ],
 });
 
-await stagehand.init();
-const page = await stagehand.context.awaitActivePage();
+await marketingHand.init();
+const page = await marketingHand.context.awaitActivePage();
 await page.goto("https://example.com");
 ```
 
@@ -132,14 +105,14 @@ created pages.
 
 ## Documentation
 
-Visit [docs.stagehand.dev](https://docs.stagehand.dev) to view the full documentation.
+Use this fork's README and source for MarketingHand-specific behavior. MarketingHand keeps the Stagehand API surface where the package has not been renamed.
 
 
 ### Build and Run from Source
 
 ```bash
-git clone https://github.com/browserbase/stagehand.git
-cd stagehand
+git clone https://github.com/mmirman/chat.dev.marketing-headles-browser.git
+cd chat.dev.marketing-headles-browser
 pnpm install
 pnpm run build
 pnpm run example # run the blank script at ./examples/example.ts
@@ -154,23 +127,20 @@ nano .env # Edit the .env file to add API keys
 
 ### Installing from a branch
 
-You can install and build Stagehand directly from a github branch using [gitpkg](https://github.com/EqualMa/gitpkg)
+You can install and build MarketingHand directly from a github branch using [gitpkg](https://github.com/EqualMa/gitpkg)
 
 In your project's `package.json` set:
 ```json
-"@browserbasehq/stagehand": "https://gitpkg.now.sh/browserbase/stagehand/packages/core?<branchName>",
+"@browserbasehq/stagehand": "https://gitpkg.now.sh/mmirman/chat.dev.marketing-headles-browser/packages/core?<branchName>",
 ```
 
 
 ## Contributing
 
 > [!NOTE]
-> We highly value contributions to Stagehand! For questions or support, please join our [Discord community](https://stagehand.dev/discord).
+> MarketingHand is a fork of Browserbase Stagehand.
 
-At a high level, we're focused on improving reliability, extensibility, speed, and cost in that order of priority. If you're interested in contributing, **bug fixes and small improvements are the best way to get started**. For more involved features, we strongly recommend reaching out to [Miguel Gonzalez](https://x.com/miguel_gonzf) or [Paul Klein](https://x.com/pk_iv) in our [Discord community](https://stagehand.dev/discord) before starting to ensure that your contribution aligns with our goals.
-
-
-<!-- For more information, please see our [Contributing Guide](https://docs.stagehand.dev/examples/contributing). -->
+At a high level, MarketingHand keeps the Stagehand foundation while carrying fork-specific browser automation changes in this repository.
 
 ## Acknowledgements
 
