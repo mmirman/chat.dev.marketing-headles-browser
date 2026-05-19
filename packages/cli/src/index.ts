@@ -183,6 +183,34 @@ function getSessionParamsPath(session: string): string {
   return path.join(SOCKET_DIR, `browse-${session}.session-params`);
 }
 
+function getDomainModificationPath(session: string): string {
+  return path.join(SOCKET_DIR, `browse-${session}.append-test-domain`);
+}
+
+async function readAppendTestDomain(session: string): Promise<boolean> {
+  try {
+    return (await fs.readFile(getDomainModificationPath(session), "utf-8"))
+      .trim()
+      .toLowerCase() === "true";
+  } catch {
+    return false;
+  }
+}
+
+async function writeAppendTestDomain(
+  session: string,
+  enabled: boolean,
+): Promise<void> {
+  if (enabled) {
+    await fs.writeFile(getDomainModificationPath(session), "true");
+    return;
+  }
+
+  try {
+    await fs.unlink(getDomainModificationPath(session));
+  } catch {}
+}
+
 // ==================== LOCAL STRATEGY CONFIG ====================
 
 async function readLocalConfig(session: string): Promise<LocalConfig> {
@@ -318,6 +346,7 @@ async function cleanupStaleFiles(session: string): Promise<void> {
     getConnectPath(session),
     getLocalConfigPath(session),
     getSessionParamsPath(session),
+    getDomainModificationPath(session),
   ];
 
   for (const file of files) {
@@ -390,6 +419,7 @@ async function runDaemon(session: string, headless: boolean): Promise<void> {
   let stagehand: Stagehand | null = null;
   let context: BrowseContext | null = null;
   let isInitializing = false;
+  const appendTestDomain = await readAppendTestDomain(session);
 
   /**
    * Lazy browser initialization - called on first command (like agent-browser)
@@ -554,7 +584,11 @@ async function runDaemon(session: string, headless: boolean): Promise<void> {
         const result = await executeCommand(
           ctx,
           request.command,
-          request.args,
+          applyDomainModification(
+            request.command,
+            request.args,
+            appendTestDomain,
+          ),
           sh,
         );
         response = { success: true, result };
@@ -1602,6 +1636,7 @@ interface GlobalOpts {
   json?: boolean;
   session?: string;
   connect?: string;
+  appendTestDomain?: boolean;
   // Session creation flags (remote only)
   proxies?: boolean;
   advancedStealth?: boolean;
@@ -1618,6 +1653,48 @@ function getSession(opts: GlobalOpts): string {
 
 function isHeadless(opts: GlobalOpts): boolean {
   return opts.headless === true && opts.headed !== true;
+}
+
+function appendTestToDomain(value: string): string {
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    return value;
+  }
+
+  const hostname = url.hostname;
+  if (!hostname || net.isIP(hostname) !== 0) {
+    return value;
+  }
+
+  const labels = hostname.split(".");
+  const labelIndex = labels.length > 1 ? labels.length - 2 : 0;
+  if (labels[labelIndex].endsWith("test")) return value;
+  labels[labelIndex] = `${labels[labelIndex]}test`;
+  url.hostname = labels.join(".");
+  return url.toString();
+}
+
+function applyDomainModification(
+  command: string,
+  args: unknown[],
+  enabled: boolean | undefined,
+): unknown[] {
+  if (!enabled) return args;
+
+  if (command === "open" && typeof args[0] === "string") {
+    return [appendTestToDomain(args[0]), ...args.slice(1)];
+  }
+
+  if (
+    command === "newpage" &&
+    (typeof args[0] === "string" || args[0] === undefined)
+  ) {
+    return [args[0] ? appendTestToDomain(args[0]) : args[0]];
+  }
+
+  return args;
 }
 
 function buildSessionParamsFromOpts(
@@ -1658,6 +1735,17 @@ function output(data: unknown, json: boolean): void {
 async function runCommand(command: string, args: unknown[]): Promise<unknown> {
   const opts = program.opts<GlobalOpts>();
   const session = getSession(opts);
+  if (opts.appendTestDomain) {
+    const wasEnabled = await readAppendTestDomain(session);
+    await writeAppendTestDomain(session, true);
+    if (!wasEnabled && (await isDaemonRunning(session))) {
+      await stopDaemonAndCleanup(session);
+    }
+  }
+  const appendTestDomain = opts.ws
+    ? opts.appendTestDomain
+    : await readAppendTestDomain(session);
+  const commandArgs = applyDomainModification(command, args, appendTestDomain);
   const headless = isHeadless(opts);
   // If --ws provided, bypass daemon and connect directly
   if (opts.ws) {
@@ -1672,7 +1760,7 @@ async function runCommand(command: string, args: unknown[]): Promise<unknown> {
     });
     await stagehand.init();
     try {
-      return await executeCommand(stagehand.context, command, args);
+      return await executeCommand(stagehand.context, command, commandArgs);
     } finally {
       await stagehand.close();
     }
@@ -1739,7 +1827,7 @@ async function runCommand(command: string, args: unknown[]): Promise<unknown> {
   }
 
   await ensureDaemon(session, headless);
-  return sendCommand(session, command, args, headless);
+  return sendCommand(session, command, commandArgs, headless);
 }
 
 program
@@ -1760,6 +1848,11 @@ program
   .option(
     "--connect <session-id>",
     "Connect to an existing Browserbase session by ID",
+  )
+  .option(
+    "--append-test-domain",
+    "Append 'test' to URL domains before browser navigation",
+    false,
   )
   .option("--proxies", "Enable Browserbase proxy (remote only)")
   .option("--advanced-stealth", "Enable advanced stealth mode (remote only)")
@@ -1791,6 +1884,13 @@ program
   .action(async () => {
     const opts = program.opts<GlobalOpts>();
     const session = getSession(opts);
+    if (opts.appendTestDomain) {
+      const wasEnabled = await readAppendTestDomain(session);
+      await writeAppendTestDomain(session, true);
+      if (!wasEnabled && (await isDaemonRunning(session))) {
+        await stopDaemonAndCleanup(session);
+      }
+    }
     if (await isDaemonRunning(session)) {
       console.log(JSON.stringify({ status: "already running", session }));
       return;

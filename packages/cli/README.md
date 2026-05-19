@@ -68,6 +68,8 @@ The `--timeout` flag (default: 30000ms) controls how long to wait for the page l
 browse open https://slow-site.com --timeout 60000
 ```
 
+Use `--append-test-domain` to rewrite navigation domains before opening them. For example, `https://example.com/signup` is opened as `https://exampletest.com/signup`. When used with a session daemon, the setting is applied automatically to later navigation commands in that session.
+
 ### Click Actions
 
 ```bash
@@ -232,6 +234,7 @@ browse status
 | `--headed` | Run Chrome with visible window (default) |
 | `--ws <url\|port>` | One-shot CDP connection (bypasses daemon) |
 | `--json` | Output as JSON |
+| `--append-test-domain` | Append `test` to URL domains before browser navigation |
 
 ## Environment Variables
 
